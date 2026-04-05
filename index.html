@@ -150,12 +150,13 @@
 
     /* ── Hero ── */
     .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-top: 64px;
-    }
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 64px;
+  position: relative;
+}
 
     .hero-inner {
       padding: 80px 0 60px;
@@ -201,12 +202,13 @@
     .hero-sub strong { color: var(--text); font-weight: 500; }
 
     .hero-actions {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: fadeUp 0.8s ease forwards 0.8s;
-    }
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.8s;
+  justify-content: center;
+}
 
     .btn-primary {
       display: inline-flex;
@@ -266,19 +268,21 @@
     }
 
     .countdown-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  text-align: center;
+}
 
     .countdown {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 
     .countdown-unit {
       text-align: center;
@@ -707,7 +711,49 @@
       background: linear-gradient(90deg, var(--purple), transparent);
       opacity: 0.3;
     }
+/* ── Scroll indicator — desktop only ── */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1.4s;
+}
 
+.scroll-indicator span {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.scroll-arrow {
+  width: 20px;
+  height: 20px;
+  border-right: 1px solid var(--muted);
+  border-bottom: 1px solid var(--muted);
+  transform: rotate(45deg);
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(45deg) translateY(6px); }
+}
+
+@media (max-width: 768px) {
+  .scroll-indicator { display: none; }
+  .audience-grid { grid-template-columns: 1fr; }
+  .steps::before { display: none; }
+  .hero-headline { font-size: 48px; }
+  .countdown-value { font-size: 36px; }
+}
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .audience-grid { grid-template-columns: 1fr; }
@@ -793,6 +839,12 @@
       </div>
 
     </div>
+
+    <div class="scroll-indicator">
+      <span>// Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+
   </section>
 
   <!-- Screenshot -->
