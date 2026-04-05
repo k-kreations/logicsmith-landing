@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogicSmith — Coming Soon</title>
+  <meta name="description" content="Stop explaining your project to AI. Start building with it. LogicSmith bridges the gap between AI assistants and Unreal Engine Blueprints." />
+  <meta property="og:title" content="LogicSmith — Coming Soon" />
+  <meta property="og:description" content="Stop explaining your project to AI. Start building with it." />
+  <meta property="og:image" content="DevDiaryExample.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Barlow:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #9D30FF;
+      --green: #00FF87;
+      --cyan: #00C2FF;
+      --bg: #0A0A0F;
+      --surface: #13111A;
+      --surface2: #1C1828;
+      --border: #2A2438;
+      --text: #FFFFFF;
+      --muted: #8B7FA8;
+      --heading: 'Barlow Condensed', sans-serif;
+      --body: 'Barlow', sans-serif;
+      --mono: 'Share Tech Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── Grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(157,48,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(157,48,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Glow orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: rgba(157,48,255,0.12);
+      top: -200px; left: -200px;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width: 400px; height: 400px;
+      background: rgba(0,194,255,0.08);
+      bottom: 10%; right: -100px;
+      animation: drift 16s ease-in-out infinite alternate-reverse;
+    }
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: rgba(0,255,135,0.06);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(40px, 30px); }
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo svg { width: 32px; height: 32px; }
+
+    .logo-text {
+      font-family: var(--heading);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .logo-text span { color: var(--purple); }
+
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--purple);
+      background: rgba(157,48,255,0.1);
+      border: 1px solid rgba(157,48,255,0.3);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 64px;
+    }
+
+    .hero-inner {
+      padding: 80px 0 60px;
+    }
+
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-headline {
+      font-family: var(--heading);
+      font-size: clamp(48px, 8vw, 88px);
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-headline .accent { color: var(--purple); }
+    .hero-headline .accent-green { color: var(--green); }
+
+    .hero-sub {
+      font-family: var(--body);
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 560px;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-sub strong { color: var(--text); font-weight: 500; }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      background: var(--purple);
+      color: white;
+      font-family: var(--heading);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 32px rgba(157,48,255,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 48px rgba(157,48,255,0.6);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      background: transparent;
+      color: var(--cyan);
+      font-family: var(--heading);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 6px;
+      border: 1px solid rgba(0,194,255,0.4);
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      border-color: var(--cyan);
+      background: rgba(0,194,255,0.08);
+    }
+
+    /* ── Countdown ── */
+    .countdown-section {
+      padding: 20px 0 60px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1s;
+    }
+
+    .countdown-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .countdown {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .countdown-unit {
+      text-align: center;
+    }
+
+    .countdown-value {
+      font-family: var(--heading);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+      display: block;
+    }
+
+    .countdown-unit-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+      display: block;
+    }
+
+    .countdown-sep {
+      font-family: var(--heading);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--border);
+      line-height: 1;
+      align-self: flex-start;
+      padding-top: 2px;
+    }
+
+    /* ── Screenshot ── */
+    .screenshot-section {
+      padding: 60px 0;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.2s;
+    }
+
+    .screenshot-wrapper {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow:
+        0 0 0 1px rgba(157,48,255,0.1),
+        0 32px 80px rgba(0,0,0,0.6),
+        0 0 80px rgba(157,48,255,0.08);
+    }
+
+    .screenshot-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 60%,
+        rgba(10,10,15,0.8) 100%
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .screenshot-wrapper img {
+      width: 100%;
+      display: block;
+    }
+
+    .screenshot-caption {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .screenshot-caption span {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(10,10,15,0.8);
+      padding: 6px 16px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Features ── */
+    .features-section {
+      padding: 80px 0;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 16px;
+    }
+
+    .section-heading {
+      font-family: var(--heading);
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(157,48,255,0.4);
+      transform: translateY(-4px);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+      background: linear-gradient(90deg, var(--purple), var(--cyan));
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+
+    .feature-title {
+      font-family: var(--heading);
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .feature-desc {
+      font-family: var(--body);
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .feature-desc strong { color: var(--text); font-weight: 500; }
+
+    /* ── How it works ── */
+    .how-section {
+      padding: 80px 0;
+      background: var(--surface);
+      margin: 0 -9999px;
+      padding-left: 9999px;
+      padding-right: 9999px;
+    }
+
+    .how-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0;
+      position: relative;
+      margin-top: 60px;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple), var(--cyan), var(--green), transparent);
+      opacity: 0.3;
+    }
+
+    .step {
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--purple);
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-title {
+      font-family: var(--heading);
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .step-desc {
+      font-family: var(--body);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Who it's for ── */
+    .audience-section {
+      padding: 80px 0;
+    }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .audience-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px;
+    }
+
+    .audience-card.highlight {
+      border-color: rgba(157,48,255,0.3);
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(157,48,255,0.05) 100%);
+    }
+
+    .audience-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 12px;
+    }
+
+    .audience-title {
+      font-family: var(--heading);
+      font-size: 24px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .audience-desc {
+      font-family: var(--body);
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(157,48,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-heading {
+      font-family: var(--heading);
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .cta-sub {
+      font-family: var(--body);
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .cta-note {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-text {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-text a {
+      color: var(--purple);
+      text-decoration: none;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+
+    /* ── Divider ── */
+    .lcars-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 0 0 60px;
+    }
+
+    .lcars-divider .bar {
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    .lcars-divider .bar-short {
+      width: 40px;
+      background: var(--purple);
+    }
+
+    .lcars-divider .bar-long {
+      flex: 1;
+      background: linear-gradient(90deg, var(--purple), transparent);
+      opacity: 0.3;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .audience-grid { grid-template-columns: 1fr; }
+      .steps::before { display: none; }
+      .hero-headline { font-size: 48px; }
+      .countdown-value { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 702.02 706.45">
+          <path fill="#ffffff" d="M536.41,181.91h-229.54v161.24h225.51c80.54,0,153.03,30.23,153.03,100.78,0,63.24-58.25,94.89-128.33,100.77H68.96c-40.27,0-52.35-15.12-52.35-65.51V.5H.5v705.44h137.23s398.68.01,398.68.01c.27,0,.53,0,.8-.01h27.07v-2.69c76.18-14.86,137.23-89.75,137.23-188.78v-150.16c0-110.86-76.51-182.41-165.11-182.41Z"/>
+          <path fill="#9d30ff" d="M302.84.51c-88.59,0-165.11,80.62-165.11,191.48v150.16c0,110.85,76.51,182.41,165.11,182.41h116.78v-161.24h-112.76c-80.54,0-153.03-30.23-153.03-100.78s72.49-101.79,153.03-101.79l394.65,1.01V.51h-398.68Z"/>
+        </svg>
+        <span class="logo-text">Logic<span>Smith</span></span>
+      </a>
+      <span class="nav-badge pulse">// Closed Beta — May 5</span>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+
+      <p class="hero-label">// Coming Soon</p>
+
+      <h1 class="hero-headline">
+        Stop explaining<br>
+        your project<br>
+        <span class="accent">to AI.</span><br>
+        Start <span class="accent-green">building</span><br>
+        with it.
+      </h1>
+
+      <p class="hero-sub">
+        LogicSmith bridges the gap between AI assistants and Unreal Engine Blueprints.
+        <strong>Structured templates. Parsed output. Instructions built around your actual project</strong> —
+        not a generic game dev tutorial.
+      </p>
+
+      <div class="hero-actions">
+        <a href="YOUR_DISCORD_INVITE_LINK" target="_blank" class="btn-primary">
+          Join the Community →
+        </a>
+        <a href="YOUR_BETA_FORM_LINK" target="_blank" class="btn-secondary">
+          Apply for Beta
+        </a>
+      </div>
+
+      <!-- Countdown -->
+      <div class="countdown-section">
+        <p class="countdown-label">// Closed beta opens in</p>
+        <div class="countdown">
+          <div class="countdown-unit">
+            <span class="countdown-value" id="cd-days">00</span>
+            <span class="countdown-unit-label">Days</span>
+          </div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-unit">
+            <span class="countdown-value" id="cd-hours">00</span>
+            <span class="countdown-unit-label">Hours</span>
+          </div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-unit">
+            <span class="countdown-value" id="cd-mins">00</span>
+            <span class="countdown-unit-label">Minutes</span>
+          </div>
+          <span class="countdown-sep">:</span>
+          <div class="countdown-unit">
+            <span class="countdown-value" id="cd-secs">00</span>
+            <span class="countdown-unit-label">Seconds</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Screenshot -->
+  <section class="screenshot-section">
+    <div class="container">
+      <div class="screenshot-wrapper">
+        <img src="DevDiaryExample.png" alt="LogicSmith Dev Diary — showing project phases, tasks, and Blueprint structure" />
+        <div class="screenshot-caption">
+          <span>// LogicSmith Dev Diary — actual build, not a mockup</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features-section">
+    <div class="container">
+      <p class="section-label">// What It Does</p>
+      <h2 class="section-heading">Built for how you<br>actually work</h2>
+
+      <div class="lcars-divider">
+        <div class="bar bar-short"></div>
+        <div class="bar bar-long"></div>
+      </div>
+
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3 class="feature-title">Structured Templates</h3>
+          <p class="feature-desc">
+            Copy a purpose-built prompt into Claude or ChatGPT. The AI already knows your project name,
+            engine version, and what it's building. <strong>No more re-explaining from scratch.</strong>
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Parsed Output</h3>
+          <p class="feature-desc">
+            Paste the AI's response back into LogicSmith. It extracts variables, components,
+            functions, and connections into <strong>a clean, readable format</strong> you can actually use.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📖</div>
+          <h3 class="feature-title">Dev Diary</h3>
+          <p class="feature-desc">
+            Every Blueprint you generate gets saved to your project diary.
+            <strong>Never lose your instructions again.</strong> Reference, review, and build on your work session after session.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🐍</div>
+          <h3 class="feature-title">Python Scaffolder</h3>
+          <p class="feature-desc">
+            LogicSmith generates a Python script for every Blueprint.
+            <strong>Run it directly in Unreal Engine</strong> to scaffold your Blueprint structure automatically.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🗺️</div>
+          <h3 class="feature-title">Implementation Plan</h3>
+          <p class="feature-desc">
+            From your Game Design Document to a full phase-by-phase build plan.
+            <strong>Know exactly what to build, and in what order</strong> — before you write a single node.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⬡</div>
+          <h3 class="feature-title">Standalone Mode</h3>
+          <p class="feature-desc">
+            Don't need a full project? Use the standalone utility for <strong>one-shot Blueprint instructions</strong>
+            on any asset, any time — saved to your personal repository.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how-section">
+    <div class="how-inner">
+      <p class="section-label">// How It Works</p>
+      <h2 class="section-heading">Three steps.<br>Zero confusion.</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">01</div>
+          <h3 class="step-title">Copy the Template</h3>
+          <p class="step-desc">LogicSmith builds a structured prompt pre-loaded with your project context. One click to copy.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">02</div>
+          <h3 class="step-title">Talk to Your AI</h3>
+          <p class="step-desc">Paste into Claude or ChatGPT. Get specific, structured Blueprint instructions — not generic advice.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">03</div>
+          <h3 class="step-title">Paste & Parse</h3>
+          <p class="step-desc">Paste the AI's response back. LogicSmith extracts everything and saves it to your Dev Diary.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">04</div>
+          <h3 class="step-title">Build in Unreal</h3>
+          <p class="step-desc">Use the parsed output and Python scaffolder to build your Blueprint — with confidence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who it's for -->
+  <section class="audience-section">
+    <div class="container">
+      <p class="section-label">// Who It's For</p>
+      <h2 class="section-heading">You don't need to<br>know everything yet.</h2>
+
+      <div class="audience-grid">
+        <div class="audience-card highlight">
+          <p class="audience-label">// Primary Audience</p>
+          <h3 class="audience-title">The New Game Dev</h3>
+          <p class="audience-desc">
+            You've watched the tutorials. You understand the basics. But the moment you try to build
+            something real, AI gives you generic answers that don't fit your project.
+            LogicSmith was built for exactly this moment.
+          </p>
+        </div>
+        <div class="audience-card">
+          <p class="audience-label">// Also Welcome</p>
+          <h3 class="audience-title">The Experienced Builder</h3>
+          <p class="audience-desc">
+            You know what you're doing but you want AI to actually understand your project.
+            The standalone utility and Dev Diary give you a structured workflow that respects
+            your experience and accelerates your output.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <p class="section-label" style="text-align:center">// Get Early Access</p>
+      <h2 class="cta-heading">Join the founding<br>community.</h2>
+      <p class="cta-sub">
+        Beta opens May 5, 2026. Spots are limited.
+        The people who join now will shape what LogicSmith becomes.
+      </p>
+      <div class="cta-actions">
+        <a href="YOUR_DISCORD_INVITE_LINK" target="_blank" class="btn-primary">
+          Join Discord →
+        </a>
+        <a href="YOUR_BETA_FORM_LINK" target="_blank" class="btn-secondary">
+          Apply for Beta
+        </a>
+      </div>
+      <p class="cta-note">// Free to join. No credit card. No commitment.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <p class="footer-text">
+        © 2026 <a href="https://logicsmith.dev">LogicSmith</a> — Kinrade Kreations
+      </p>
+      <div class="footer-links">
+        <a href="YOUR_DISCORD_INVITE_LINK" target="_blank">Discord</a>
+        <a href="YOUR_BETA_FORM_LINK" target="_blank">Apply for Beta</a>
+        <a href="mailto:hello@logicsmith.dev">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Countdown to May 5, 2026
+    const target = new Date('2026-05-05T00:00:00').getTime()
+
+    function updateCountdown() {
+      const now = new Date().getTime()
+      const diff = target - now
+
+      if (diff <= 0) {
+        document.getElementById('cd-days').textContent = '00'
+        document.getElementById('cd-hours').textContent = '00'
+        document.getElementById('cd-mins').textContent = '00'
+        document.getElementById('cd-secs').textContent = '00'
+        return
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const secs = Math.floor((diff % (1000 * 60)) / 1000)
+
+      document.getElementById('cd-days').textContent = String(days).padStart(2, '0')
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0')
+      document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0')
+      document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0')
+    }
+
+    updateCountdown()
+    setInterval(updateCountdown, 1000)
+  </script>
+
+</body>
+</html>
